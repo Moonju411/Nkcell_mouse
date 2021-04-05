@@ -1,3 +1,8 @@
+#install.packages("heatmaply")
+library(heatmaply)
+library(Seurat)
+
+
 draw_cluster_deg_heatmap <- function(input_seuratobj, thr_p_val_adj=0.01, thr_avg_logFC=1) {
   # cluter per marker_gene_number heatmap
   intput_cluster_number = length(levels(input_seuratobj@active.ident))    #클러스터 갯수(if 0~8이면 9)
