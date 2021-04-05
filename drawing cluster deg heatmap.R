@@ -1,7 +1,7 @@
 #install.packages("heatmaply")
 library(heatmaply)
 library(Seurat)
-
+library(Matrix)
 
 draw_cluster_deg_heatmap <- function(input_seuratobj, thr_p_val_adj=0.01, thr_avg_logFC=1) {
   # cluter per marker_gene_number heatmap
@@ -20,10 +20,11 @@ draw_cluster_deg_heatmap <- function(input_seuratobj, thr_p_val_adj=0.01, thr_av
     }
   }
   mtx_all
-  
   mtx_all[is.na(mtx_all)] <- 0
   
-  df_mtx <- data.frame(mtx_all)
+  mtx_sym <- forceSymmetric(mtx_all,uplo = 'L')
+  df_mtx <- data.frame(mtx_sym)
+  
   rownames(df_mtx) <- c(0:(intput_cluster_number-1))
   colnames(df_mtx) <- c(0:(intput_cluster_number-1))
   
