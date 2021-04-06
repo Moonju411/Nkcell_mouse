@@ -1,5 +1,4 @@
 #install.packages("heatmaply")
-#install.packages("heatmaply")
 library(heatmaply)
 library(Seurat)
 library(Matrix)
