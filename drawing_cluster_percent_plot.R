@@ -2,7 +2,7 @@
 library(ggplot2)
 library(reshape2)
 
-#Drawing cluster per barplot
+#Drawing stacked-barplot per cluster on each group ( H-Epi vs L-Epi )
 library(ggplot2)
 library(reshape2)
 
@@ -21,3 +21,18 @@ ggplot(freq_table2, aes(fill = cluster_id, y = freq, x = group_id, label = freq,
 
 ggplot(freq_table2, aes(fill = cluster_id, y = freq, x = group_id, label = freq, order = as.numeric(freq)))+
   geom_bar(stat = "identity")
+
+
+##Drawing stacked-barplot per group on each cluster ( H-Epi vs L-Epi )
+library(ggplot2)
+library(reshape2)
+
+freq_table3 <- prop.table(x = table(Epi.integrated@active.ident, Epi.integrated@meta.data[, "group_id"]), margin = 1)
+freq_table4 <- melt(freq_table3)
+colnames(freq_table4)  <- c('cluster_id','group_id','freq')
+freq_table4$cluster_id <- as.character(freq_table4$cluster_id)
+freq_table4$freq       <- round(freq_table4$freq*100, digits = 1)
+
+ggplot(freq_table4, aes(fill = group_id, y = freq, x = cluster_id, label = freq, order = as.numeric(cluster_id))) + 
+  geom_bar(stat = "identity" )+
+  geom_text(size = 3, position = position_stack(vjust = 0.5))
