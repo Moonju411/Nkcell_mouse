@@ -64,4 +64,35 @@ p1 <- DimPlot(Epi.integrated, reduction = "umap", group.by = "group_id")
 p2 <- DimPlot(Epi.integrated, reduction = "umap", label = TRUE)
 plot_grid(p1, p2)
 
+# Visualization splited by group_id
 DimPlot(Epi.integrated, reduction = "umap", split.by = "group_id")
+                                       
+# For performing differential expression after integration, we switch back to the original data
+DefaultAssay(Epi.integrated) <- "RNA"
+                                       
+# FeaturePlot
+FeaturePlot()
+
+# Dotplot
+markers.to.plot <- c("Gzmb","Prf1","Gzma","Cpt1b",'Fabp5',"Lpl","Cd36",'Fabp4')
+DotPlot(Epi.integrated, features = markers.to.plot, cols = c("blue", "red"), dot.scale = 8, split.by = "group_id") + 
+  RotatedAxis()
+
+# CorrelationPlot
+cluster0_H <- subset(Epi.integrated, (seurat_clusters == '0') & (group_id == 'H_Epi'))
+cluster0_L <- subset(Epi.integrated, (seurat_clusters == '0') & (group_id == 'L_Epi'))
+Idents(cluster0_H) <- "H_Epi"
+Idents(cluster0_L) <- "L_Epi"
+df_cluster0_H <- as.data.frame(log1p(AverageExpression(cluster0_H, verbose = FALSE)$RNA))
+df_cluster0_L <- as.data.frame(log1p(AverageExpression(cluster0_L, verbose = FALSE)$RNA))
+df_cluster0 <- cbind(df_cluster0_H, df_cluster0_L)
+df_cluster0$gene <- rownames(df_cluster0)
+df_cluster0$average_fc <- df_cluster0$H_Epi/df_cluster0$L_Epi
+
+genes.to.label <- c("Gzmb","Prf1","Gzma","Cpt1b",'Fabp5',"Lpl","Cd36",'Fabp4')
+p1 <- ggplot(df_cluster0, aes(H_Epi, L_Epi)) + geom_point()
+p1 <- LabelPoints(plot = p1, points = genes.to.label, repel = TRUE)
+p1
+                                      
+                                               
+                                       
