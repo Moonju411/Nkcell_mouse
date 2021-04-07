@@ -11,7 +11,12 @@ conda install -c conda-forge r-seurat #monocle3라는 이름의 conda envronmnet
 jupyter kernelspec list으로 ir 뜨는 지 확인
 ![화면 캡처 2021-04-07 195820](https://user-images.githubusercontent.com/42495757/113856052-b24db080-97db-11eb-86ed-98364819beee.png)
 
-4. 주피터 노트북에서
+4. 주피터 노트북 접속
+jupyter notebook --ip=172.27.30.99
+빨간줄 복사에서 웹브라우저로 접속하기
+![image](https://user-images.githubusercontent.com/42495757/113856474-41f35f00-97dc-11eb-827f-8703c331094a.png)
+
+5. 주피터 노트북에서
 install.packages("remotes")
-remotes::install_github('satijalab/seurat-wrappers’)
+remotes::install_github('satijalab/seurat-wrappers’) #seurat이랑 monocle3 같이쓰기
 
