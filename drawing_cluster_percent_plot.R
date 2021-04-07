@@ -14,7 +14,7 @@ colnames(freq_table2)  <- c('cluster_id','group_id','freq')
 freq_table2$cluster_id <- as.character(freq_table2$cluster_id)
 freq_table2$freq       <- round(freq_table2$freq*100, digits = 1)
 
-ggplot(freq_table2, aes(fill = cluster_id, y = freq, x = group_id, label = freq, order = as.numeric(cluster_id))) + 
+ggplot(freq_table2, aes(fill = cluster_id, y = freq, x = group_id, label = freq, order = as.numeric(cluster_id))) + #label제거할 때는 label=freq을 제거하시면 됩니다. 
   geom_bar(stat = "identity" )+
   geom_text(size = 3, position = position_stack(vjust = 0.5))
 
@@ -33,6 +33,6 @@ colnames(freq_table4)  <- c('cluster_id','group_id','freq')
 freq_table4$cluster_id <- as.character(freq_table4$cluster_id)
 freq_table4$freq       <- round(freq_table4$freq*100, digits = 1)
 
-ggplot(freq_table4, aes(fill = group_id, y = freq, x = cluster_id, label = freq, order = as.numeric(cluster_id))) + 
+ggplot(freq_table4, aes(fill = group_id, y = freq, x = cluster_id, label = freq, order = as.numeric(cluster_id))) + #label제거할 때는 label=freq을 제거하시면 됩니다. 
   geom_bar(stat = "identity" )+
   geom_text(size = 3, position = position_stack(vjust = 0.5))
