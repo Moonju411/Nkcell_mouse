@@ -9,3 +9,7 @@ Nkcell_mouse scRNA-seq downstream analysis code
 
 3.Doubletfinder
 ![image](https://user-images.githubusercontent.com/42495757/113691865-df309380-9707-11eb-8567-eeb4f7ce1309.png)
+
+4.SCtransform
+![image](https://user-images.githubusercontent.com/42495757/114653459-149a3a00-9d23-11eb-86cf-581fb58637a9.png)
+![image](https://user-images.githubusercontent.com/42495757/114653465-195eee00-9d23-11eb-82de-d46a2b0edf0b.png)
