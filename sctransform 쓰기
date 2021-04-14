@@ -1,0 +1,26 @@
+#See sctransform vignette here: https://satijalab.org/seurat/archive/v3.0/sctransform_vignette.html
+
+library(Seurat)
+library(ggplot2)
+library(sctransform)
+
+H_BM <- Read10X(data.dir = "/node210data/project/mouse_NK_cell/cellranger_out/H-BM/outs/filtered_feature_bc_matrix")
+H_BM <- CreateSeuratObject(counts = H_BM)
+
+# store mitochondrial percentage in object meta data
+H_BM <- PercentageFeatureSet(H_BM, pattern = "^mt-", col.name = "percent.mt")
+
+# run sctransform
+H_BM <- SCTransform(H_BM, vars.to.regress = "percent.mt", verbose = FALSE)
+
+# These are now standard steps in the Seurat workflow for visualization and clustering
+H_BM <- RunPCA(H_BM, verbose = FALSE)
+DimPlot(H_BM)
+H_BM <- RunUMAP(H_BM, dims = 1:30, verbose = FALSE)
+
+H_BM <- FindNeighbors(H_BM, dims = 1:30, verbose = FALSE)
+H_BM <- FindClusters(H_BM, verbose = FALSE)
+DimPlot(H_BM, label = TRUE) + NoLegend()
+
+FeaturePlot(H_BM, 'Flt3')
+VlnPlot(H_BM, 'Flt3')
