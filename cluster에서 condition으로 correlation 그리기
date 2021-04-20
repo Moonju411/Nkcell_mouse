@@ -1,0 +1,22 @@
+#Let's draw correlationPlot on the cluster H <-> L
+library(ggplot2)
+library(dplyr)
+cluster0.cells <- subset(Epi.integrated.F, idents = "0") # 보고 싶은 클러스터로 subset
+Idents(cluster0.cells) <- "group_id" # group_id로 ident 덮어쓰기(H인지, L인지)
+H_enriched_top10 <- FindMarkers(cluster0.cells, ident.1 = "H_Epi", ident.2 = "L_Epi") %>% top_n(n = 10, wt = avg_logFC) # 표시할 유전자 고르기
+L_enriched_top10 <- FindMarkers(cluster0.cells, ident.1 = "H_Epi", ident.2 = "L_Epi") %>% top_n(n = 10, wt = -avg_logFC) # 표시할 유전자 고르기
+
+df_mark_H = subset(avg.0.cells, avg.0.cells[['gene']] %in% rownames(H_enriched_top10))
+df_mark_L = subset(avg.0.cells, avg.0.cells[['gene']] %in% rownames(L_enriched_top10))
+
+avg.0.cells <- as.data.frame(log1p(AverageExpression(cluster0.cells, verbose = FALSE)$RNA))
+avg.0.cells$gene <- rownames(avg.0.cells)
+
+#여기서부터 플롯 그리기
+p1 <- ggplot(avg.0.cells, aes(H_Epi, L_Epi)) + geom_point(color="gray")
+p1 <- LabelPoints(plot = p1, points = rownames(H_enriched_top10), repel = TRUE)
+p1 <- LabelPoints(plot = p1, points = rownames(L_enriched_top10), repel = TRUE)
+
+p1 <- p1 + geom_point(data= df_mark_H, aes(H_Epi, L_Epi, color= "darkblue")) 
+p1 <- p1 + geom_point(data= df_mark_L, aes(H_Epi, L_Epi, color= "darkred"))
+p1 + theme(legend.position="none")
