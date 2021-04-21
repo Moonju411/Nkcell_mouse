@@ -1,3 +1,5 @@
+library(ggplot2)
+library(dplyr)
 draw_condition_correlation_plot_ver2 <- function(input_seuratobj, cluster= NULL, top_n= 10 ) {
   DefaultAssay(input_seuratobj) <- "RNA"
   subset_cluster <- subset(input_seuratobj, idents = cluster) # 보고 싶은 클러스터로 subset
@@ -26,14 +28,22 @@ draw_condition_correlation_plot_ver2 <- function(input_seuratobj, cluster= NULL,
   p1 <- p1 + geom_point(data= df_mark_H, aes_string(names(df_mark_H)[1], names(df_mark_H)[2]), color= "darkblue")
   p1 <- p1 + geom_point(data= df_mark_L, aes_string(names(df_mark_L)[1], names(df_mark_L)[2]), color= "darkred")
   p1 <- p1 + xlab(paste('log1p(Avg.expression(' , names(df_mark_H)[1] , '))')) + ylab(paste('log1p(Avg.expression(' , names(df_mark_H)[2] , '))')) + theme(legend.position="none")
-  p_out <<- p1 + ggtitle(paste('cluster', cluster))
+  
+  if (length(cluster) > 1){
+    p_out <<- p1 + ggtitle(paste("cluster", paste( unlist(cluster), collapse=' and ')))
+  } else {
+    p_out <<- p1 + ggtitle(paste('cluster', cluster))
+  }
   p_out
 }
 
-#for example, 함수에서 알아서 active,ident인지, group_id인지 보고, 조건도 맞춰서 넣음.
+#for example, (함수에서 알아서 active,ident인지, group_id인지 보고, 조건도 맞춰서 넣음).
 draw_condition_correlation_plot_ver2(input_seuratobj=Epi.integrated.F, cluster = "1", top_n=10)
 
-#한번에 여러개 반복문으로 그리려면,
+#두개 클러스터 merge하려면 cluster=c("1","2")이렇게 하면 됨.
+draw_condition_correlation_plot_ver2(input_seuratobj=Epi.integrated.F, cluster = c("0","1"), top_n=10)
+
+#한번에 여러개 반복문으로 그리고 단일 pdf로 저장하기
 plist <- list()  #플롯들을 저장할 리스트
 markerlist <- list() #마커들을 저장할 리스트
 for(i in 0:(length(levels(Idents(Epi.integrated.F)))-1)){
