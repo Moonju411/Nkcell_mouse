@@ -1,22 +1,34 @@
-#Let's draw correlationPlot on the cluster H <-> L
-library(ggplot2)
-library(dplyr)
-cluster0.cells <- subset(Epi.integrated.F, idents = "0") # 보고 싶은 클러스터로 subset
-Idents(cluster0.cells) <- "group_id" # group_id로 ident 덮어쓰기(H인지, L인지)
-H_enriched_top10 <- FindMarkers(cluster0.cells, ident.1 = "H_Epi", ident.2 = "L_Epi") %>% top_n(n = 10, wt = avg_logFC) # 표시할 유전자 고르기
-L_enriched_top10 <- FindMarkers(cluster0.cells, ident.1 = "H_Epi", ident.2 = "L_Epi") %>% top_n(n = 10, wt = -avg_logFC) # 표시할 유전자 고르기
+#그리는 거 함수화 함.
+draw_condition_correlation_plot_ver2 <- function(input_seuratobj, cluster= NULL, top_n= 10 ) {
+  DefaultAssay(input_seuratobj) <- "RNA"
+  subset_cluster <- subset(input_seuratobj, idents = cluster) # 보고 싶은 클러스터로 subset
+  
+  if ("group_id" %in% colnames(subset_cluster@meta.data)){
+    Idents(subset_cluster) <- "group_id" # group_id로 ident 덮어쓰기(H인지, L인지)
+  } else {
+    Idents(subset_cluster) <- subset_cluster@active.ident
+  } # group_id로 ident 덮어쓰기(H인지, L인지)
+  
+  diff_condition_marker <<- FindMarkers(subset_cluster, ident.1 = levels(Idents(subset_cluster))[1], ident.2 = levels(Idents(subset_cluster))[2])
+  H_enriched_top10 <- diff_condition_marker %>% top_n(n = 10, wt = avg_logFC) # 표시할 유전자 고르기
+  L_enriched_top10 <- diff_condition_marker %>% top_n(n = 10, wt = -avg_logFC) # 표시할 유전자 고르기
+  
+  subset_cluster <- as.data.frame(log1p(AverageExpression(subset_cluster, verbose = FALSE)$RNA))
+  subset_cluster$gene <- rownames(subset_cluster)
+  
+  df_mark_H = subset(subset_cluster, subset_cluster[['gene']] %in% rownames(H_enriched_top10))
+  df_mark_L = subset(subset_cluster, subset_cluster[['gene']] %in% rownames(L_enriched_top10))
+  
+  #여기서부터 플롯 그리기
+  p1 <- ggplot(subset_cluster, aes_string(names(subset_cluster)[1], names(subset_cluster)[2])) + geom_point(color="gray")
+  p1 <- LabelPoints(plot = p1, points = rownames(H_enriched_top10), repel = TRUE)
+  p1 <- LabelPoints(plot = p1, points = rownames(L_enriched_top10), repel = TRUE)
+  
+  p1 <- p1 + geom_point(data= df_mark_H, aes_string(names(df_mark_H)[1], names(df_mark_H)[2]), color= "grayblue")
+  p1 <- p1 + geom_point(data= df_mark_L, aes_string(names(df_mark_L)[1], names(df_mark_L)[2]), color= "darkred")
+  p1 + xlab(paste('log1p(Avg.expression(' , names(df_mark_H)[1] , '))')) + ylab(paste('log1p(Avg.expression(' , names(df_mark_H)[2] , '))')) + theme(legend.position="none")
+  
+}
 
-df_mark_H = subset(avg.0.cells, avg.0.cells[['gene']] %in% rownames(H_enriched_top10))
-df_mark_L = subset(avg.0.cells, avg.0.cells[['gene']] %in% rownames(L_enriched_top10))
-
-avg.0.cells <- as.data.frame(log1p(AverageExpression(cluster0.cells, verbose = FALSE)$RNA))
-avg.0.cells$gene <- rownames(avg.0.cells)
-
-#여기서부터 플롯 그리기
-p1 <- ggplot(avg.0.cells, aes(H_Epi, L_Epi)) + geom_point(color="gray")
-p1 <- LabelPoints(plot = p1, points = rownames(H_enriched_top10), repel = TRUE)
-p1 <- LabelPoints(plot = p1, points = rownames(L_enriched_top10), repel = TRUE)
-
-p1 <- p1 + geom_point(data= df_mark_H, aes(H_Epi, L_Epi, color= "darkblue")) 
-p1 <- p1 + geom_point(data= df_mark_L, aes(H_Epi, L_Epi, color= "darkred"))
-p1 + theme(legend.position="none")
+#for example,
+draw_condition_correlation_plot_ver2(Epi.integrated.F, cluster = "1")
