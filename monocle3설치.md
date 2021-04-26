@@ -19,7 +19,7 @@
 빨간줄 복사에서 웹브라우저로 접속하기
 ![image](https://user-images.githubusercontent.com/42495757/113856474-41f35f00-97dc-11eb-827f-8703c331094a.png)
 
-5. 주피터 노트북에서
-`install.packages("remotes")`
-`remotes::install_github('satijalab/seurat-wrappers’)` #seurat이랑 monocle3 같이쓰기
+5. 주피터 노트북에서  
+`install.packages("remotes")` 
+`remotes::install_github('satijalab/seurat-wrappers’)` #seurat이랑 monocle3 같이쓰기  
 
