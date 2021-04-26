@@ -7,7 +7,7 @@
 `conda install -c bioconda r-monocle3` #monocle3라는 이름의 conda envronmnet에 monocle3 설치  
 `conda install -c conda-forge r-seurat` #monocle3라는 이름의 conda envronmnet에 seurat 설치 ( r 버전때문에 seurat 버전이 달라짐)  
 
-2-1. 미리 설정된 .yaml파일이 있는 경우
+2-1. 미리 설정된 .yaml파일이 있는 경우  
 `conda env create -n {env name} --file {environment.yaml}`
 
 3. 주피터 노트북 설치/설정
