@@ -8,7 +8,10 @@
 `conda install -c conda-forge r-seurat` #monocle3라는 이름의 conda envronmnet에 seurat 설치 ( r 버전때문에 seurat 버전이 달라짐)  
 
 2-1. 미리 설정된 .yaml파일이 있는 경우  
-`conda env create -n {env name} --file {environment.yaml}`
+`conda env create --file {environment.yaml} -n {env name}` # 순서 중요함  
+
+2-2. conda환경 yaml파일로 export하기  
+`conda env export --no-builds > environment.yml` # --no-builds하니까 패키지 깔려야 할 것들 안깔리는 문제 해결됨
 
 3. 주피터 노트북 설치/설정
 `jupyter kernelspec list`으로 ir 뜨는 지 확인. 
